@@ -16,10 +16,10 @@ import tensorflow as tf
 from data_util import GeneratorEnqueuer
 
 tf.app.flags.DEFINE_string(
-    'training_data_path', 'dataFolder/textBox_Anno_trainIcdar/img', 'training dataset to use')
+    'training_data_path', '/home/linus/2DOCR/data/set1/images/', 'training dataset to use')
 tf.app.flags.DEFINE_string(
-    'training_anno_path', 'dataFolder/textBox_Anno_trainIcdar/icdar', 'training dataset to use')
-tf.app.flags.DEFINE_string('vocb_path', 'dataFolder/textBox_Anno_trainIcdar/vocb_3.txt', 'vocb file path')
+    'training_anno_path', '/home/linus/2DOCR/data/set1/icdar/', 'training dataset to use')
+tf.app.flags.DEFINE_string('vocb_path', '/home/linus/2DOCR/FOTS/', 'vocb file path')
 
 tf.app.flags.DEFINE_bool('avoid_vertText', True, 'avoid_vertText')
 tf.app.flags.DEFINE_bool('allow_unknown_char', True, 'allow unknown char')
