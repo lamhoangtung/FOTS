@@ -93,7 +93,7 @@ class recognizer(object):
                       )
             lstmout = tf.concat(lstmout, 2)
             # lstmout shape:  [times, b, 2 * num_hidden]
-            self.logits = slim.fully_connected(lstmout, self.NUM_CLASSES, activation_fn=None, scope='fc')
+            self.logits = slim.fully_connected(lstmout, self.NUM_CLASSES+1, activation_fn=None, scope='fc')
             self.calout = self.logits
             self.logits = tf.transpose(self.logits, (1, 0, 2))
             # logits shape:  [b, times, NUM_CLASSES]

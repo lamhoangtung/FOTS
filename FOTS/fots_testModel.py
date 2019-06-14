@@ -2,12 +2,12 @@ import tensorflow as tf
 import numpy as np
 import cv2
 
-import detector
-import recognizer
-import RoiRotate
-import sharedConv
-from icdar import NUM_CLASSES, restore_roiRotatePara, restore_rectangle, decode_maps
-import locality_aware_nms as nms_locality
+from FOTS import detector
+from FOTS import recognizer
+from FOTS import RoiRotate
+from FOTS import sharedConv
+from FOTS.dataset.dataReader import NUM_CLASSES, restore_roiRotatePara, restore_rectangle, decode_maps
+from FOTS import locality_aware_nms as nms_locality
 
 tf.app.flags.DEFINE_integer('test_input_size', 224, '')
 tf.app.flags.DEFINE_integer('test_batch', 8, '')
@@ -210,11 +210,13 @@ class FOTS_testModel():
     def detectRecg(self, im, sess=None):
         if sess:
             self.sess = sess
+        print("Mark 1")
         brboxes, bsharedFeatures = self.detect(im, getFeatures = True)
         out_res = [[[1., brboxes[i][j], 0., ''] for j in range(len(brboxes[i]))] for i in range(len(brboxes))]
         box_index = []
         brotateParas = []
         filter_bsharedFeatures = []
+        print("Mark 2")
         for i, rboxes, sharedFeatures in zip(range(len(brboxes)), brboxes, bsharedFeatures):
             rotateParas = []
             for j, rbox in enumerate(rboxes):
@@ -230,12 +232,13 @@ class FOTS_testModel():
         if len(brotateParas) == 0:
             return out_res
         filter_bsharedFeatures = np.array(filter_bsharedFeatures, np.float32)
-
+        print("Mark 3")
         rois_op, ws_op = RoiRotate.RoiRotate(filter_bsharedFeatures, FLAGS.features_stride)(brotateParas)
-
+        print("Mark 4")
         rois, ws = self.sess.run([rois_op, ws_op])
-        preD = self.forward_recg(ros, ws)
-
+        print("Mark 5")
+        preD = self.forward_recg(rois, ws)
+        print("mark 6")
         for ij, conf_ans in zip(box_index, preD):
             conf, ans = conf_ans
             img_index, box_on_img_index = ij

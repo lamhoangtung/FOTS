@@ -1,7 +1,11 @@
-#coding=utf-8
-import os, sys, csv
+# coding=utf-8
+import os
+import sys
+import csv
+import numpy as np
 icdarFolder = sys.argv[1]
 vocb_flie = sys.argv[2]
+
 
 def GetAllFiles(path):
     """
@@ -16,8 +20,10 @@ def GetAllFiles(path):
     pt = os.walk(path)
     for t in pt:
         if len(t[2]) > 0:
-            listFiles.extend([os.path.join(t[0], fileName) for fileName in t[2]])
+            listFiles.extend([os.path.join(t[0], fileName)
+                              for fileName in t[2]])
     return listFiles
+
 
 def load_annoataion(p):
     '''
@@ -40,22 +46,27 @@ def load_annoataion(p):
             if label == '###':
                 text_tags.append(None)
             else:
-                text_tags.append(label.decode("utf-8"))
+                # text_tags.append(label.decode("utf-8"))
+                text_tags.append(label)
 
         return text_tags
+
 
 strs = [load_annoataion(p) for p in GetAllFiles(icdarFolder)]
 strs = [j for s in strs for j in s if j]
 strs = [k for j in strs if len(j.strip()) > 0 for k in j.strip()]
 # print strs
 
+
 def all_list(arr):
     result = {}
     for i in set(arr):
         result[i] = arr.count(i)
     return result
+
+
 strs_count = all_list(strs)
 strs_count = sorted(strs_count.items(), key=lambda k: k[1])[::-1]
 strs = [i[0] for i in strs_count]
 s = '\n'.join(strs)
-open(vocb_flie, 'w').write(s.encode('utf-8'))
+open(vocb_flie, 'w').write(s)

@@ -1,16 +1,20 @@
+import sys
+
+sys.path.append('..')
 import tensorflow as tf
 import numpy as np
 
-import detector
-import recognizer
-import RoiRotate
-import sharedConv
-from icdar import NUM_CLASSES
+from FOTS import detector
+from FOTS import recognizer
+from FOTS import RoiRotate
+from FOTS import sharedConv
+from FOTS.dataset.dataReader import NUM_CLASSES
 
 tf.app.flags.DEFINE_float('keepProb', 0.8, '')
 tf.app.flags.DEFINE_float('alpha', 1., '')
 tf.app.flags.DEFINE_float('beta', 1., '')
 FLAGS = tf.app.flags.FLAGS
+
 
 class FOTS_trainModel():
     def __init__(self, images, brboxes, reuse_variables=None):

@@ -5,6 +5,7 @@ import sys
 import random
 import os
 
+
 def Mat2Xml(matfile, saveFolder):
     if os.path.exists(saveFolder) is False:
         os.makedirs(saveFolder)
@@ -13,7 +14,7 @@ def Mat2Xml(matfile, saveFolder):
 
     train_file = open(os.path.join(saveFolder, 'train.txt'), 'w')
     test_file = open(os.path.join(saveFolder, 'test.txt'), 'w')
-    
+
     for i in range(len(data['txt'][0])):
         contents = []
         for val in data['txt'][0][i]:
@@ -22,15 +23,15 @@ def Mat2Xml(matfile, saveFolder):
         print >> sys.stderr, "No.{} data".format(i)
         rec = np.array(data['wordBB'][0][i], dtype=np.int32)
         if len(rec.shape) == 3:
-            rec = rec.transpose(2,1,0)
+            rec = rec.transpose(2, 1, 0)
         else:
-            rec = rec.transpose(1,0)[np.newaxis, :]
+            rec = rec.transpose(1, 0)[np.newaxis, :]
 
-        doc = xml.dom.minidom.Document() 
-        root = doc.createElement('annotation') 
-        doc.appendChild(root) 
+        doc = xml.dom.minidom.Document()
+        root = doc.createElement('annotation')
+        doc.appendChild(root)
         print("start to process {} object".format(len(rec)))
-        
+
         for j in range(len(rec)):
             nodeobject = doc.createElement('object')
             nodecontent = doc.createElement('content')
@@ -55,7 +56,7 @@ def Mat2Xml(matfile, saveFolder):
 
             nodebndbox = doc.createElement('bndbox')
             for k in bndbox.keys():
-                nodecoord =  doc.createElement(k)
+                nodecoord = doc.createElement(k)
                 nodecoord.appendChild(doc.createTextNode(str(bndbox[k])))
                 nodebndbox.appendChild(nodecoord)
 
@@ -68,7 +69,7 @@ def Mat2Xml(matfile, saveFolder):
         fp = open(os.path.join(xmlFolder, filename), 'w')
         doc.writexml(fp, indent='\t', addindent='\t', newl='\n', encoding="utf-8")
         fp.close()
-        rad = random.uniform(10,20)
+        rad = random.uniform(10, 20)
         pwd = os.getcwd()
         img_path = os.path.join(pwd, data['imnames'][0][i][0])
         xml_path = os.path.join(pwd, filename)
@@ -76,10 +77,11 @@ def Mat2Xml(matfile, saveFolder):
         if rad > 18:
             train_file.write(file_line)
         else:
-            test_file.write(file_line)    
+            test_file.write(file_line)
 
     train_file.close()
     test_file.close()
+
 
 def Mat2icdar(matfile, saveFolder):
     if os.path.exists(saveFolder) is False:
@@ -91,16 +93,17 @@ def Mat2icdar(matfile, saveFolder):
         for val in data['txt'][0][i]:
             v = [x.split("\n") for x in val.strip().split(" ")]
             contents.extend(sum(v, []))
-        print >> sys.stderr, "No.{} data".format(i)
+        # print >> sys.stderr, "No.{} data".format(i)
+        print(sys.stderr, "No.{} data".format(i))
         rec = np.array(data['wordBB'][0][i], dtype=np.int32)
         if len(rec.shape) == 3:
-            rec = rec.transpose(2,1,0)
+            rec = rec.transpose(2, 1, 0)
         else:
-            rec = rec.transpose(1,0)[np.newaxis, :]
+            rec = rec.transpose(1, 0)[np.newaxis, :]
 
         root = []
         print("start to process {} object".format(len(rec)))
-        
+
         for j in range(len(rec)):
             infos = []
             infos.append(str(int(rec[j][0][0])))
@@ -115,9 +118,14 @@ def Mat2icdar(matfile, saveFolder):
             root.append(infos)
 
         filename = data['imnames'][0][i][0].replace('.jpg', '.icdar')
-        fp = open(os.path.join(saveFolder, filename), 'w')
-        fp.write('\n'.join([','.join([for i in j]) for j in root]))
-        fp.close()
+        #fp = open(os.path.join(saveFolder, filename), 'w')
+        destination = os.path.join(saveFolder, os.path.basename(filename))
+        if not os.path.exists(os.path.dirname(destination)):
+            os.makedirs(os.path.dirname(destination))
+        with open(destination, 'w') as fp:
+            fp.write('\n'.join([','.join([i for i in j]) for j in root]))
+            fp.close()
 
-if __name__=='__main__':
-    Mat2icdar('dataFolder/')
+
+if __name__ == '__main__':
+   Mat2icdar('dataFolder/')
