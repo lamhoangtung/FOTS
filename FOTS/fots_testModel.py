@@ -242,7 +242,10 @@ class FOTS_testModel():
         for ij, conf_ans in zip(box_index, preD):
             conf, ans = conf_ans
             img_index, box_on_img_index = ij
-            conf, ans = self.ctc_label_confidence(conf, ans)
+            try:
+                conf, ans = self.ctc_label_confidence(conf, ans)
+            except:
+                import pdb; pdb.set_trace()
             if len(conf) == 0:
                 continue
             # ret=''.encode('utf-8')
